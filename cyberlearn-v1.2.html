@@ -1,0 +1,1163 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0d14;
+  --bg2:#0f1320;
+  --bg3:#141926;
+  --surface:#1a2035;
+  --surface2:#202840;
+  --border:#2a3550;
+  --border2:#3a4a6a;
+  --accent:#00e5ff;
+  --accent2:#7c4dff;
+  --accent3:#00ff88;
+  --accent4:#ff6b35;
+  --accent5:#ffd600;
+  --text:#e8eaf6;
+  --text2:#8892aa;
+  --text3:#4a5570;
+  --danger:#ff4466;
+  --success:#00e676;
+  --warning:#ffab40;
+  --font-main:'Syne',sans-serif;
+  --font-mono:'Space Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-height:100vh;overflow-x:hidden}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#080b12;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:flex-start;padding:20px 0;gap:2px;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-logo{width:48px;height:48px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;margin:0 16px 20px 16px;flex-shrink:0;font-family:var(--font-mono);letter-spacing:-1px}
+.nav-item{width:100%;display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;border-radius:0;transition:all .2s;white-space:nowrap;border-left:3px solid transparent;color:var(--text2)}
+.nav-item:hover{background:var(--surface);color:var(--text);border-left-color:var(--border2)}
+.nav-item.active{background:rgba(0,229,255,.07);color:var(--accent);border-left-color:var(--accent)}
+.nav-item i{font-size:18px;flex-shrink:0;width:20px}
+.nav-label{font-size:13px;font-weight:600;letter-spacing:.4px}
+.nav-sep{width:calc(100% - 32px);height:1px;background:var(--border);margin:10px 16px}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:18px;font-weight:700;letter-spacing:1px;font-family:var(--font-mono);color:var(--accent)}
+.xp-bar{display:flex;align-items:center;gap:12px}
+.xp-label{font-size:12px;color:var(--text2);font-family:var(--font-mono)}
+.xp-track{width:120px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:3px;transition:width .5s}
+.level-badge{background:rgba(124,77,255,.15);border:1px solid var(--accent2);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--accent2);font-family:var(--font-mono)}
+.streak{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--warning);font-weight:700;background:rgba(255,171,64,.12);border:1px solid rgba(255,171,64,.3);border-radius:20px;padding:5px 12px}
+.content{flex:1;padding:24px;overflow-y:auto}
+.page{display:none}
+.page.active{display:block}
+
+.hero{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,255,.06) 0%,transparent 70%);pointer-events:none}
+.hero-title{font-size:28px;font-weight:800;margin-bottom:8px;letter-spacing:1px}
+.hero-title span{color:var(--accent)}
+.hero-sub{color:var(--text2);font-size:15px;margin-bottom:20px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat-num{font-size:24px;font-weight:800;font-family:var(--font-mono);color:var(--accent)}
+.stat-label{font-size:11px;color:var(--text2);margin-top:4px;letter-spacing:.5px;text-transform:uppercase}
+.modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.module-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.module-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .25s;background:linear-gradient(135deg,rgba(0,229,255,.05),transparent)}
+.module-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.module-card:hover::before{opacity:1}
+.module-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.module-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.module-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.module-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;font-family:var(--font-mono)}
+.badge-new{background:rgba(0,229,255,.15);color:var(--accent);border:1px solid rgba(0,229,255,.3)}
+.badge-hot{background:rgba(255,107,53,.15);color:var(--accent4);border:1px solid rgba(255,107,53,.3)}
+
+.section-title{font-size:20px;font-weight:800;margin-bottom:16px;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.tag-blue{background:rgba(0,229,255,.1);color:var(--accent);border:1px solid rgba(0,229,255,.2)}
+.tag-purple{background:rgba(124,77,255,.1);color:var(--accent2);border:1px solid rgba(124,77,255,.2)}
+.tag-green{background:rgba(0,230,118,.1);color:var(--accent3);border:1px solid rgba(0,230,118,.2)}
+.tag-orange{background:rgba(255,107,53,.1);color:var(--accent4);border:1px solid rgba(255,107,53,.2)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:var(--font-main);letter-spacing:.5px}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:#00b8d4;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-success{background:var(--success);color:#000}
+
+.concept-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;transition:border-color .2s}
+.concept-card:hover{border-color:var(--border2)}
+.concept-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.concept-name{font-size:18px;font-weight:800;letter-spacing:.5px}
+.concept-category{font-size:11px;color:var(--text2);margin-top:2px}
+.concept-def{color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:12px;padding:12px;background:var(--surface);border-radius:8px;border-left:3px solid var(--accent2)}
+.concept-analogy{color:var(--text2);font-size:13px;font-style:italic;padding:10px 12px;border-radius:8px;background:rgba(124,77,255,.08);border:1px solid rgba(124,77,255,.15)}
+.concept-analogy::before{content:'💡 ';font-style:normal}
+.expand-btn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:12px;font-family:var(--font-main);display:flex;align-items:center;gap:4px;padding:6px 0;transition:color .2s}
+.expand-btn:hover{color:var(--accent)}
+.concept-extra{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.concept-extra.open{display:block}
+.example-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.example-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2)}
+.example-list li::before{content:'→';color:var(--accent);flex-shrink:0;margin-top:1px}
+
+.compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.compare-side{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:20px}
+.compare-side.left{border-top:3px solid var(--accent2)}
+.compare-side.right{border-top:3px solid var(--accent3)}
+.compare-title{font-size:16px;font-weight:800;margin-bottom:12px}
+.compare-prop{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.prop-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.prop-val{font-size:13px;color:var(--text);line-height:1.5}
+.vs-badge{text-align:center;font-size:28px;font-weight:900;color:var(--accent);font-family:var(--font-mono);padding:8px;margin-bottom:8px}
+.diff-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.diff-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);font-weight:600}
+.diff-table td{padding:10px 14px;border-top:1px solid var(--border);color:var(--text2)}
+.diff-table tr:hover td{background:var(--surface2)}
+.trap-card{background:rgba(255,68,102,.08);border:1px solid rgba(255,68,102,.25);border-radius:12px;padding:16px;margin-bottom:10px}
+.trap-card .trap-q{font-size:14px;font-weight:600;color:var(--danger);margin-bottom:6px}
+.trap-card .trap-a{font-size:13px;color:var(--text2);line-height:1.5}
+
+.scenario-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+.scenario-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.scenario-icon{width:40px;height:40px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--border)}
+.scenario-title{font-size:16px;font-weight:800}
+.scenario-diff{font-size:11px;padding:2px 8px;border-radius:20px;font-family:var(--font-mono)}
+.diff-easy{background:rgba(0,230,118,.1);color:var(--success)}
+.diff-medium{background:rgba(255,171,64,.1);color:var(--warning)}
+.diff-hard{background:rgba(255,68,102,.1);color:var(--danger)}
+.scenario-text{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px;padding:14px;background:var(--surface);border-radius:8px;font-style:italic}
+.scenario-question{font-size:14px;font-weight:600;margin-bottom:12px}
+.options-list{display:flex;flex-direction:column;gap:8px}
+.option-btn{width:100%;text-align:left;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;font-size:13px;transition:all .2s;display:flex;align-items:center;gap:10px;font-family:var(--font-main)}
+.option-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.option-btn.correct{border-color:var(--success);background:rgba(0,230,118,.08);color:var(--success)}
+.option-btn.wrong{border-color:var(--danger);background:rgba(255,68,102,.08);color:var(--danger)}
+.option-letter{width:22px;height:22px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:var(--font-mono)}
+
+.quiz-wrap{max-width:640px;margin:0 auto}
+.quiz-progress{display:flex;gap:4px;margin-bottom:24px}
+.quiz-dot{height:4px;flex:1;border-radius:2px;background:var(--border);transition:background .3s}
+.quiz-dot.done{background:var(--accent)}
+.quiz-dot.current{background:var(--accent2)}
+.quiz-q{font-size:18px;font-weight:700;margin-bottom:8px;line-height:1.4}
+.quiz-type{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;font-family:var(--font-mono)}
+.quiz-feedback{margin-top:16px;padding:14px;border-radius:10px;font-size:14px;line-height:1.5;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.right{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);color:var(--success)}
+.quiz-feedback.wrong{background:rgba(255,68,102,.08);border:1px solid rgba(255,68,102,.2);color:var(--danger)}
+.quiz-score{text-align:center;padding:32px;background:var(--bg3);border:1px solid var(--border);border-radius:16px}
+.score-num{font-size:64px;font-weight:900;font-family:var(--font-mono);background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.score-label{font-size:16px;color:var(--text2);margin-top:4px}
+
+.battle-arena{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;margin-bottom:20px}
+.battle-side{background:var(--bg3);border:2px solid var(--border);border-radius:14px;padding:20px;transition:border-color .3s}
+.battle-side.selected{border-color:var(--accent)}
+.battle-side-name{font-size:18px;font-weight:900;margin-bottom:12px;letter-spacing:1px}
+.battle-side.a .battle-side-name{color:var(--accent2)}
+.battle-side.b .battle-side-name{color:var(--accent3)}
+.battle-trait{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;transition:color .2s}
+.battle-trait:last-child{border:none}
+.battle-trait:hover{color:var(--accent)}
+.battle-trait i{font-size:14px;color:var(--text3)}
+.battle-vs{font-size:32px;font-weight:900;color:var(--text3);font-family:var(--font-mono);display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:40px}
+.battle-score{font-size:14px;font-family:var(--font-mono);color:var(--accent);font-weight:700}
+.battle-stmt{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}
+.battle-stmt-text{font-size:14px;margin-bottom:10px}
+.battle-choices{display:flex;gap:8px}
+.battle-choice{flex:1;padding:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+.battle-choice:hover{border-color:var(--accent);color:var(--accent)}
+.battle-choice.win{border-color:var(--success);background:rgba(0,230,118,.08);color:var(--success)}
+.battle-choice.lose{border-color:var(--danger);background:rgba(255,68,102,.08);color:var(--danger)}
+
+.progress-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.progress-section{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:20px}
+.concept-mastery{display:flex;flex-direction:column;gap:8px;max-height:360px;overflow-y:auto}
+.mastery-item{display:flex;align-items:center;gap:10px}
+.mastery-name{font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mastery-bar{width:80px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden;flex-shrink:0}
+.mastery-fill{height:100%;border-radius:3px;transition:width .5s}
+.mastery-score{font-size:12px;font-family:var(--font-mono);color:var(--text2);width:32px;text-align:right;flex-shrink:0}
+.achievements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.achievement{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;transition:border-color .2s}
+.achievement.earned{border-color:var(--warning)}
+.achievement-icon{font-size:24px;margin-bottom:6px}
+.achievement-name{font-size:11px;color:var(--text2);font-weight:600}
+.radar-container{position:relative;width:100%;padding-top:90%}
+.radar-svg{position:absolute;inset:0;width:100%;height:100%}
+.activity-list{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto}
+.activity-item{display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface);border-radius:8px;font-size:13px}
+.activity-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.activity-icon.quiz{background:rgba(124,77,255,.15);color:var(--accent2)}
+.activity-icon.battle{background:rgba(0,230,118,.15);color:var(--accent3)}
+.activity-icon.scenario{background:rgba(0,229,255,.15);color:var(--accent)}
+.activity-info{flex:1}
+.activity-title{font-weight:600;color:var(--text)}
+.activity-time{font-size:11px;color:var(--text3);font-family:var(--font-mono)}
+.activity-xp{font-family:var(--font-mono);font-size:12px;color:var(--warning);font-weight:700}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--accent);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:600;color:var(--accent);font-family:var(--font-mono);z-index:999;animation:slideUp .3s ease;display:none}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.tab-bar{display:flex;gap:4px;margin-bottom:20px;background:var(--bg2);padding:4px;border-radius:10px;border:1px solid var(--border)}
+.tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;border-radius:7px;transition:all .2s;color:var(--text2);letter-spacing:.3px}
+.tab.active{background:var(--surface2);color:var(--accent)}
+.category-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.filter-btn{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .2s;font-family:var(--font-main);letter-spacing:.3px}
+.filter-btn.active,.filter-btn:hover{background:var(--surface2);border-color:var(--accent2);color:var(--accent2)}
+.search-bar{width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;margin-bottom:16px;outline:none;font-family:var(--font-main);transition:border-color .2s}
+.search-bar:focus{border-color:var(--accent2)}
+.empty-state{text-align:center;padding:40px;color:var(--text3)}
+.empty-state i{font-size:48px;display:block;margin-bottom:12px}
+.combo-select{padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:var(--font-main);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">CS</div>
+  <div class="nav-item active" onclick="navigate('home')" data-page="home"><i class="ti ti-home"></i><span class="nav-label">Inicio</span></div>
+  <div class="nav-item" onclick="navigate('academy')" data-page="academy"><i class="ti ti-books"></i><span class="nav-label">Academia</span></div>
+  <div class="nav-item" onclick="navigate('compare')" data-page="compare"><i class="ti ti-arrows-diff"></i><span class="nav-label">Comparador</span></div>
+  <div class="nav-item" onclick="navigate('scenarios')" data-page="scenarios"><i class="ti ti-device-desktop"></i><span class="nav-label">Laboratorio Teorico</span></div>
+  <div class="nav-item" onclick="navigate('quiz')" data-page="quiz"><i class="ti ti-brain"></i><span class="nav-label">Quiz</span></div>
+  <div class="nav-item" onclick="navigate('battle')" data-page="battle"><i class="ti ti-sword"></i><span class="nav-label">Batallas</span></div>
+  <div class="nav-sep"></div>
+  <div class="nav-item" onclick="navigate('progress')" data-page="progress"><i class="ti ti-chart-bar"></i><span class="nav-label">Mi Progreso</span></div>
+  <div class="nav-item" onclick="confirmReset()" style="margin-top:auto"><i class="ti ti-refresh"></i><span class="nav-label">Reiniciar</span></div>
+</nav> 
+<div class="main">
+<div class="topbar">
+  <div class="topbar-title">// CYBERLEARN</div>
+  <div class="xp-bar">
+    <div class="streak"><i class="ti ti-flame"></i><span id="streak-num">0</span>&nbsp;días</div>
+    <div class="level-badge" id="level-badge">LVL 1</div>
+    <div class="xp-label" id="xp-label">0 / 500 XP</div>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+</div>
+<div class="content">
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-title">Bienvenido a <span>CyberLearn</span></div>
+    <div class="hero-sub">Entrena conceptos de ciberseguridad de forma interactiva. Diferencia, practica y domina.</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="s-concepts">0</div><div class="stat-label">Conceptos vistos</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-quizzes">0</div><div class="stat-label">Quizzes completados</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-battles">0</div><div class="stat-label">Batallas ganadas</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-xp">0</div><div class="stat-label">XP total</div></div>
+    </div>
+  </div>
+  <div class="section-title"><i class="ti ti-layout-grid"></i> Módulos</div>
+  <div class="modules-grid">
+    <div class="module-card" onclick="navigate('academy')">
+      <div class="module-icon" style="background:rgba(124,77,255,.15);color:var(--accent2)"><i class="ti ti-book"></i></div>
+      <div class="module-title">Academia</div>
+      <div class="module-desc">Definiciones, ejemplos, analogías y casos reales de los conceptos clave.</div>
+      <div class="module-badge badge-new">30 conceptos</div>
+    </div>
+    <div class="module-card" onclick="navigate('compare')">
+      <div class="module-icon" style="background:rgba(0,229,255,.15);color:var(--accent)"><i class="ti ti-arrows-diff"></i></div>
+      <div class="module-title">Comparador</div>
+      <div class="module-desc">Diferencia conceptos similares, detecta errores y analiza matices clave.</div>
+      <div class="module-badge badge-hot">10 pares</div>
+    </div>
+    <div class="module-card" onclick="navigate('scenarios')">
+      <div class="module-icon" style="background:rgba(0,230,118,.15);color:var(--accent3)"><i class="ti ti-terminal"></i></div>
+      <div class="module-title">Laboratorio</div>
+      <div class="module-desc">Escenarios reales donde aplicar y contextualizar los conceptos aprendidos.</div>
+    </div>
+    <div class="module-card" onclick="navigate('quiz')">
+      <div class="module-icon" style="background:rgba(255,214,0,.15);color:var(--accent5)"><i class="ti ti-brain"></i></div>
+      <div class="module-title">Quiz Adaptativo</div>
+      <div class="module-desc">Preguntas que se ajustan a tu nivel. Opción múltiple, V/F y más.</div>
+    </div>
+    <div class="module-card" onclick="navigate('battle')">
+      <div class="module-icon" style="background:rgba(255,68,102,.15);color:var(--danger)"><i class="ti ti-sword"></i></div>
+      <div class="module-title">Batallas Conceptuales</div>
+      <div class="module-desc">Enfrenta conceptos similares. Decide cuándo usar cada uno y por qué.</div>
+      <div class="module-badge badge-hot">NUEVO</div>
+    </div>
+    <div class="module-card" onclick="navigate('progress')">
+      <div class="module-icon" style="background:rgba(255,107,53,.15);color:var(--accent4)"><i class="ti ti-chart-line"></i></div>
+      <div class="module-title">Mi Progreso</div>
+      <div class="module-desc">Estadísticas, logros, racha de estudio y recomendaciones personalizadas.</div>
+    </div>
+  </div>
+  <div class="section-title"><i class="ti ti-clock"></i> Actividad reciente</div>
+  <div class="activity-list" id="home-activity"></div>
+</div>
+
+<!-- ACADEMY -->
+<div class="page" id="page-academy">
+  <div class="section-title"><i class="ti ti-book"></i> Academia de Conceptos</div>
+  <input class="search-bar" type="text" placeholder="Buscar concepto..." id="academy-search" oninput="filterConcepts()">
+  <div class="category-filter" id="cat-filter"></div>
+  <div id="concepts-list"></div>
+</div>
+
+<!-- COMPARE -->
+<div class="page" id="page-compare">
+  <div class="section-title"><i class="ti ti-arrows-diff"></i> Comparador de Conceptos</div>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <span style="font-size:13px;color:var(--text2)">Selecciona par:</span>
+    <select class="combo-select" id="compare-select" onchange="loadComparison()">
+    </select>
+  </div>
+  <div id="compare-content"></div>
+</div>
+
+<!-- SCENARIOS -->
+<div class="page" id="page-scenarios">
+  <div class="section-title"><i class="ti ti-terminal"></i> Laboratorio de Escenarios</div>
+  <div class="tab-bar">
+    <div class="tab active" onclick="filterScenarios('all',this)">Todos</div>
+    <div class="tab" onclick="filterScenarios('fácil',this)">Fácil</div>
+    <div class="tab" onclick="filterScenarios('medio',this)">Medio</div>
+    <div class="tab" onclick="filterScenarios('difícil',this)">Difícil</div>
+  </div>
+  <div id="scenarios-list"></div>
+</div>
+
+<!-- QUIZ -->
+<div class="page" id="page-quiz">
+  <div class="section-title"><i class="ti ti-brain"></i> Quiz Adaptativo</div>
+  <div class="quiz-wrap" id="quiz-container"></div>
+</div>
+
+<!-- BATTLE -->
+<div class="page" id="page-battle">
+  <div class="section-title"><i class="ti ti-sword"></i> Batallas Conceptuales</div>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <span style="font-size:13px;color:var(--text2)">Selecciona batalla:</span>
+    <select class="combo-select" id="battle-select" onchange="loadBattle()"></select>
+  </div>
+  <div id="battle-content"></div>
+</div>
+
+<!-- PROGRESS -->
+<div class="page" id="page-progress">
+  <div class="section-title"><i class="ti ti-chart-line"></i> Mi Progreso</div>
+  <div class="progress-grid">
+    <div>
+      <div class="progress-section" style="margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text2)">DOMINIO POR CONCEPTO</div>
+        <div class="concept-mastery" id="mastery-list"></div>
+      </div>
+      <div class="progress-section">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text2)">HISTORIAL RECIENTE</div>
+        <div class="activity-list" id="progress-activity"></div>
+      </div>
+    </div>
+    <div>
+      <div class="progress-section" style="margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text2)">RADAR DE CATEGORÍAS</div>
+        <div class="radar-container"><svg class="radar-svg" id="radar-svg" viewBox="0 0 200 200"></svg></div>
+      </div>
+      <div class="progress-section">
+        <div style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text2)">LOGROS</div>
+        <div class="achievements-grid" id="achievements-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const KB={
+  concepts:[
+    {id:'vuln',name:'Vulnerabilidad',cat:'Fundamentos',tags:['riesgo','fundamentos'],
+     def:'Debilidad o fallo en un sistema, software, proceso o control que puede ser explotado por un atacante.',
+     analogy:'Es como una puerta sin cerrojo: el agujero existe aunque nadie lo haya usado todavía.',
+     examples:['CVE-2021-44228 (Log4Shell): vulnerabilidad en la librería Log4j','SQL Injection: falta de validación de inputs','Buffer overflow en software legacy'],
+     realcase:'En 2017, Equifax sufrió una brecha porque no parcheó una vulnerabilidad conocida en Apache Struts.'},
+    {id:'amenaza',name:'Amenaza',cat:'Fundamentos',tags:['riesgo','fundamentos'],
+     def:'Agente, evento o circunstancia con potencial para explotar una vulnerabilidad y causar daño.',
+     analogy:'El ladrón que pasa frente a la puerta sin cerrojo. Tiene intención y capacidad, pero aún no ha actuado.',
+     examples:['Un grupo APT (Advanced Persistent Threat)','Un empleado descontento con acceso privilegiado','Un ransomware en circulación activa'],
+     realcase:'El grupo Lazarus APT representa una amenaza persistente para entidades financieras globales.'},
+    {id:'riesgo',name:'Riesgo',cat:'Fundamentos',tags:['riesgo','fundamentos'],
+     def:'Probabilidad de que una amenaza explote una vulnerabilidad y el impacto resultante. Riesgo = Probabilidad × Impacto.',
+     analogy:'El ladrón (amenaza) + la puerta sin cerrojo (vulnerabilidad) en un barrio inseguro (contexto) = riesgo alto de robo.',
+     examples:['Riesgo residual tras aplicar controles','Apetito de riesgo corporativo','Evaluación de riesgo ISO 27005'],
+     realcase:'Las matrices de riesgo NIST ayudan a priorizar qué vulnerabilidades parchear primero.'},
+    {id:'ids',name:'IDS',cat:'Detección y Defensa',tags:['defensa','monitoreo'],
+     def:'Intrusion Detection System. Sistema que monitoriza el tráfico de red o actividad del sistema para detectar comportamiento malicioso y generar alertas.',
+     analogy:'El guardia de seguridad que vigila y reporta actividad sospechosa, pero no actúa por sí mismo.',
+     examples:['Snort (IDS de red basado en firmas)','OSSEC (IDS basado en host)','Detección de escaneo de puertos'],
+     realcase:'Un IDS puede detectar un escaneo Nmap pero no bloquearlo: envía la alerta al SOC.'},
+    {id:'ips',name:'IPS',cat:'Detección y Defensa',tags:['defensa','monitoreo'],
+     def:'Intrusion Prevention System. Sistema que, además de detectar, puede bloquear automáticamente el tráfico malicioso en tiempo real.',
+     analogy:'El guardia que no solo reporta, sino que también detiene físicamente al intruso.',
+     examples:['Snort en modo inline (IPS)','Suricata como IPS','WAF actuando como IPS para aplicaciones web'],
+     realcase:'Un IPS puede cortar automáticamente una conexión que ejecuta una firma de exploit conocida.'},
+    {id:'hashing',name:'Hashing',cat:'Criptografía',tags:['cripto','integridad'],
+     def:'Función unidireccional que transforma datos de entrada en un valor de longitud fija (hash). No puede revertirse para obtener el dato original.',
+     analogy:'Una picadora de carne: puedes convertir carne en picadillo, pero no puedes reconstruir el filete original.',
+     examples:['MD5, SHA-256, bcrypt para contraseñas','Verificar integridad de archivos descargados','Firmas digitales'],
+     realcase:'Los sistemas operativos almacenan hashes de contraseñas, no las contraseñas en texto plano.'},
+    {id:'cifrado',name:'Cifrado',cat:'Criptografía',tags:['cripto','confidencialidad'],
+     def:'Proceso bidireccional que transforma datos legibles en ilegibles usando una clave. El proceso puede revertirse con la clave correcta.',
+     analogy:'Un candado con llave: puedes cerrar y abrir usando la llave correcta.',
+     examples:['AES-256 para cifrado de discos','TLS para comunicaciones HTTPS','RSA para intercambio de claves'],
+     realcase:'WhatsApp usa cifrado de extremo a extremo para que solo emisor y receptor puedan leer los mensajes.'},
+    {id:'authn',name:'Autenticación',cat:'Identidad y Acceso',tags:['iam','acceso'],
+     def:'Proceso de verificar la identidad de un usuario o sistema. Responde a: ¿Quién eres?',
+     analogy:'El guardia que revisa tu documento de identidad en la entrada del edificio.',
+     examples:['Contraseña + factor segundo (MFA)','Certificados digitales','Biometría (huella dactilar)'],
+     realcase:'OAuth 2.0 permite que una aplicación verifique tu identidad usando Google sin compartir tu contraseña.'},
+    {id:'authz',name:'Autorización',cat:'Identidad y Acceso',tags:['iam','acceso'],
+     def:'Proceso de determinar qué acciones o recursos puede acceder un usuario ya autenticado. Responde a: ¿Qué puedes hacer?',
+     analogy:'El sistema que determina a qué plantas del edificio puede acceder tu credencial una vez estás dentro.',
+     examples:['RBAC (Role Based Access Control)','ACLs (Access Control Lists)','Principio de mínimo privilegio'],
+     realcase:'Un empleado autenticado puede estar autorizado a leer documentos pero no a borrarlos.'},
+    {id:'redteam',name:'Red Team',cat:'Evaluación de Seguridad',tags:['testing','ofensivo'],
+     def:'Equipo o práctica de simular atacantes reales para evaluar la efectividad de las defensas de una organización. Enfoque ofensivo con objetivo defensivo.',
+     analogy:'El equipo de actores que simula ser ladrones para probar si el banco puede detectarlos y detenerlos.',
+     examples:['Ejercicios de simulación APT','Test de intrusión avanzado con OPSEC','Purple Team exercises'],
+     realcase:'MITRE ATT&CK es frecuentemente usado por Red Teams para simular TTPs de adversarios reales.'},
+    {id:'blueteam',name:'Blue Team',cat:'Evaluación de Seguridad',tags:['testing','defensivo'],
+     def:'Equipo responsable de defender la organización, detectar ataques y responder a incidentes. Operación del SOC.',
+     analogy:'Los policías y guardias del banco que deben detectar y detener a los actores del Red Team.',
+     examples:['Analistas SOC monitorizando SIEM','Equipo de respuesta a incidentes (IR)','Threat hunters'],
+     realcase:'Un Blue Team usa herramientas SIEM como Splunk o Elastic para correlacionar eventos de seguridad.'},
+    {id:'purpleteam',name:'Purple Team',cat:'Evaluación de Seguridad',tags:['testing','colaborativo'],
+     def:'Colaboración entre Red Team y Blue Team para mejorar mutuamente detección y ataque. No es un equipo separado sino una dinámica de trabajo.',
+     analogy:'Red y Blue trabajando juntos en el mismo simulacro, compartiendo hallazgos en tiempo real.',
+     examples:['SCYTHE para ejercicios purple team','Atomic Red Team + detección SIEM','MITRE ATT&CK Evaluations'],
+     realcase:'MITRE realiza evaluaciones Purple Team contra EDRs para medir su capacidad de detección.'},
+    {id:'pentest',name:'Pentest',cat:'Evaluación de Seguridad',tags:['testing','evaluación'],
+     def:'Prueba de penetración: evaluación técnica acotada y autorizada donde se intenta comprometer un objetivo específico para encontrar vulnerabilidades.',
+     analogy:'Contratar a un cerrajero profesional para que intente abrir tu caja fuerte y te diga cómo mejorarla.',
+     examples:['Pentest de caja negra/blanca/gris','Pentest de aplicación web (OWASP)','Test de red interna'],
+     realcase:'Los resultados de un pentest se documentan en un informe con hallazgos, CVSS scores y recomendaciones.'},
+    {id:'auditoria',name:'Auditoría de Seguridad',cat:'Evaluación de Seguridad',tags:['testing','cumplimiento'],
+     def:'Revisión sistemática de políticas, controles, configuraciones y procesos de seguridad. Más amplia y normativa que un pentest.',
+     analogy:'La inspección anual de Hacienda: revisa todos los libros contables para verificar el cumplimiento de la norma.',
+     examples:['Auditoría ISO 27001','Auditoría SOC 2 Type II','Cumplimiento PCI-DSS'],
+     realcase:'Una auditoría ISO 27001 verifica que los controles del Anexo A están documentados e implementados.'},
+    {id:'zerotrust',name:'Zero Trust',cat:'Arquitectura de Seguridad',tags:['arquitectura','red'],
+     def:'Modelo de seguridad basado en "nunca confiar, siempre verificar". Elimina el perímetro tradicional: cualquier acceso debe ser continuamente autenticado y autorizado.',
+     analogy:'Un edificio donde cada puerta requiere verificar tu identidad, incluso si ya estás dentro.',
+     examples:['BeyondCorp de Google','Micro-segmentación de red','Verificación continua de dispositivos'],
+     realcase:'Microsoft implementó Zero Trust internamente tras ser comprometidos: todos los accesos se verifican independientemente de la red.'},
+    {id:'defensedepth',name:'Defense in Depth',cat:'Arquitectura de Seguridad',tags:['arquitectura','red'],
+     def:'Estrategia de múltiples capas de controles de seguridad. Si una capa falla, las siguientes la compensan.',
+     analogy:'Un castillo medieval: foso, murallas, torres, puertas interiores y la guardia. Cada capa añade dificultad.',
+     examples:['Firewall + IPS + EDR + SIEM','Segmentación de red + cifrado + MFA','Controles técnicos + administrativos + físicos'],
+     realcase:'El modelo OSI puede mapearse con capas de defensa: capa física, red, transporte, aplicación...'},
+    {id:'ioc',name:'IOC',cat:'Inteligencia de Amenazas',tags:['threat intel','forense'],
+     def:'Indicator of Compromise. Evidencia forense de que un sistema ha sido comprometido. Son artefactos observados tras el hecho.',
+     analogy:'Las huellas dactilares y ADN encontrados en la escena del crimen: evidencian que alguien estuvo allí.',
+     examples:['Hash MD5 de malware conocido','IP de C2 (Command & Control)','Dominio malicioso','Mutex de malware'],
+     realcase:'VirusTotal usa hashes de archivos (IOCs) para detectar malware conocido.'},
+    {id:'ioa',name:'IOA',cat:'Inteligencia de Amenazas',tags:['threat intel','comportamiento'],
+     def:'Indicator of Attack. Señales de comportamiento que indican que un ataque está ocurriendo o a punto de ocurrir, independientemente del malware o herramienta usada.',
+     analogy:'El comportamiento sospechoso del ladrón: mirar escaparates sin comprar, volver varias veces, observar cámaras.',
+     examples:['Proceso de Office spawneando PowerShell','Lateral movement con credenciales válidas','Exfiltración de datos a nueva IP'],
+     realcase:'CrowdStrike se centra en IOAs para detectar amenazas sin firma (fileless malware).'},
+    {id:'malware',name:'Malware',cat:'Tipos de Ataque',tags:['ataque','malware'],
+     def:'Software malicioso diseñado para dañar, acceder sin autorización o comprometer sistemas. Categoría general que engloba muchos tipos.',
+     analogy:'El término "vehículo" para describir coches, camiones y motos. Genérico. El exploit sería el carné de conducir.',
+     examples:['Virus, gusano, troyano, ransomware','Spyware, adware, rootkit','Fileless malware'],
+     realcase:'WannaCry fue un malware tipo ransomware que se propagó como gusano usando EternalBlue.'},
+    {id:'exploit',name:'Exploit',cat:'Tipos de Ataque',tags:['ataque','técnico'],
+     def:'Código o técnica que se aprovecha de una vulnerabilidad específica para ejecutar acciones no autorizadas. Es el mecanismo de ataque.',
+     analogy:'La llave maestra fabricada específicamente para abrir la cerradura defectuosa que es la vulnerabilidad.',
+     examples:['EternalBlue para MS17-010','Metasploit modules','0-day exploit de Chrome'],
+     realcase:'EternalBlue es un exploit de la NSA filtrado por Shadow Brokers que aprovecha una vulnerabilidad SMBv1.'},
+    {id:'mitre',name:'MITRE ATT&CK',cat:'Frameworks',tags:['framework','TTPs'],
+     def:'Base de conocimiento de tácticas, técnicas y procedimientos (TTPs) de adversarios reales. Organizada por tácticas (qué quieren lograr) y técnicas (cómo lo hacen).',
+     analogy:'El catálogo exhaustivo de movimientos de ajedrez que los mejores jugadores han usado históricamente.',
+     examples:['14 tácticas: Reconocimiento, Initial Access, Execution...','Matrices para Enterprise, Mobile, ICS','Técnicas con ejemplos de APTs reales'],
+     realcase:'SOCs usan ATT&CK para mapear alertas a TTPs y detectar cadenas de ataque complejas.'},
+    {id:'killchain',name:'Cyber Kill Chain',cat:'Frameworks',tags:['framework','fases'],
+     def:'Modelo de Lockheed Martin que describe las 7 fases de un ataque cibernético: Reconocimiento, Weaponization, Delivery, Exploitation, Installation, C2, Actions on Objectives.',
+     analogy:'El guión de una película de atracos: siempre hay planificación, preparación, entrada, acción y salida.',
+     examples:['Fase Delivery: phishing email con adjunto malicioso','Fase C2: malware conectando a servidor remoto','Interrumpir en fase Delivery evita las siguientes'],
+     realcase:'Lockheed diseñó el Kill Chain para ayudar a Blue Teams a identificar en qué fase interceptar un ataque.'},
+  ],
+  comparisons:[
+    {id:'vuln-vs-amenaza',a:'vuln',b:'amenaza',
+     sims:['Ambas son parte del modelo de riesgo','Ambas deben gestionarse en un SGSI','Existen independientemente del daño causado'],
+     diffs:[['Naturaleza','Fallo técnico en el sistema','Agente externo/interno'],['Acción','Pasiva: existe, no actúa','Activa: tiene intención'],['Control','Se mitiga parcheando/corrigiendo','Se mitiga con controles e inteligencia'],['Origen','Interna al sistema','Externa al sistema']],
+     traps:[{q:'¿Una vulnerabilidad sin parchear es una amenaza?',a:'No. La amenaza es quien puede explotarla. La vulnerabilidad es el fallo. Sin una amenaza que la explote, el riesgo puede ser bajo.'}],
+     verdict:'La vulnerabilidad es el agujero; la amenaza es quien puede pasar por él.'},
+    {id:'ids-vs-ips',a:'ids',b:'ips',
+     sims:['Ambos analizan tráfico de red','Ambos usan firmas y/o anomalías','Ambos generan logs y alertas'],
+     diffs:[['Acción','Solo detecta y alerta','Detecta Y bloquea automáticamente'],['Posición en red','Fuera del flujo (pasivo/TAP)','En línea con el tráfico (inline)'],['Riesgo operacional','Bajo: no interrumpe tráfico','Mayor: puede bloquear tráfico legítimo (falsos positivos)'],['Latencia','Mínima','Añade latencia al procesamiento']],
+     traps:[{q:'¿Un IPS siempre es mejor que un IDS?',a:'No necesariamente. Un IPS mal configurado puede bloquear tráfico legítimo. En redes críticas, se suele empezar con IDS en modo monitor antes de activar modo prevención.'}],
+     verdict:'IDS observa, IPS actúa. La elección depende de la madurez del entorno y la tolerancia al falso positivo.'},
+    {id:'hash-vs-cifrado',a:'hashing',b:'cifrado',
+     sims:['Ambos transforman datos','Ambos usan funciones matemáticas','Ambos se usan en seguridad informática'],
+     diffs:[['Reversibilidad','Unidireccional: NO se puede revertir','Bidireccional: se puede descifrar con clave'],['Clave','No usa clave (o usa salt)','Requiere clave (simétrica o asimétrica)'],['Propósito','Integridad y almacenamiento de credenciales','Confidencialidad de datos'],['Salida','Longitud fija siempre','Longitud variable (similar al input)']],
+     traps:[{q:'¿Está cifrada una contraseña almacenada como hash?',a:'No. Está hasheada, no cifrada. El cifrado es reversible; el hash no. Decir "contraseña cifrada" cuando está hasheada es un error técnico común.'}],
+     verdict:'Hashear = huella digital irreversible. Cifrar = caja fuerte que se puede abrir con la llave correcta.'},
+    {id:'authn-vs-authz',a:'authn',b:'authz',
+     sims:['Ambas forman parte de IAM','Ambas protegen recursos','Ambas se aplican en cada sesión'],
+     diffs:[['Pregunta','¿Quién eres?','¿Qué puedes hacer?'],['Cuando ocurre','Antes de acceder','Después de autenticarse'],['Mecanismo','Credenciales, MFA, certs','Roles, permisos, ACLs, políticas'],['Error típico','Credenciales comprometidas','Privilege escalation']],
+     traps:[{q:'¿Un usuario autenticado tiene acceso a todo?',a:'No. La autenticación solo verifica identidad. La autorización determina los permisos. Un usuario puede estar autenticado pero no autorizado para ciertos recursos.'}],
+     verdict:'Primero demuestras quién eres (authn), luego el sistema decide qué puedes hacer (authz).'},
+    {id:'ioc-vs-ioa',a:'ioc',b:'ioa',
+     sims:['Ambos se usan en detección de amenazas','Ambos alimentan plataformas SIEM/SOAR','Ambos son parte del threat intelligence'],
+     diffs:[['Momento','Post-compromiso: evidencia de que ocurrió','Durante: indica que está ocurriendo'],['Naturaleza','Estático: hash, IP, dominio','Dinámico: comportamiento, patrón'],['Evasión','Fácil de evadir (cambiar hash/IP)','Difícil de evadir (el comportamiento no cambia)'],['Detección','Reactiva','Proactiva']],
+     traps:[{q:'¿Los IOCs son suficientes para detectar amenazas avanzadas?',a:'No. Los atacantes sofisticados cambian IPs, dominios y herramientas constantemente. Los IOAs son más robustos porque el comportamiento malicioso (ej: proceso creando red socket inesperado) es difícil de cambiar.'}],
+     verdict:'IOC = huellas del crimen pasado. IOA = comportamiento sospechoso en tiempo real.'},
+    {id:'malware-vs-exploit',a:'malware',b:'exploit',
+     sims:['Ambos son herramientas de ataque','Ambos pueden causar daño a sistemas','Ambos se usan en cadenas de ataque'],
+     diffs:[['Qué es','Programa malicioso completo','Código que aprovecha una vulnerabilidad específica'],['Objetivo','Múltiples: espiar, cifrar, persistencia','Único: ejecutar código o escalar privilegios'],['Dependencia','Puede incluir exploits o no','Necesita una vulnerabilidad concreta'],['Persistencia','Suele buscar persistencia','Efímero: logra el objetivo y termina']],
+     traps:[{q:'¿Todo exploit es malware?',a:'No. Un exploit es la técnica o código que aprovecha una vulnerabilidad. Un exploit puede ser parte de malware, pero también puede usarse en pentests legítimos. El malware es el software malicioso completo.'}],
+     verdict:'El exploit es el mecanismo de entrada; el malware es lo que entra por esa puerta.'},
+    {id:'mitre-vs-killchain',a:'mitre',b:'killchain',
+     sims:['Ambos modelan ataques cibernéticos','Ambos ayudan a Blue Teams','Ambos se usan en threat modeling'],
+     diffs:[['Granularidad','Alta: cientos de técnicas específicas','Baja: 7 fases genéricas'],['Enfoque','Qué hacen los atacantes (TTPs)','Cómo progresan los ataques (secuencia)'],['Casos de uso','Detección, hunting, emulación','Comprensión de fases, defensa por capas'],['Actualización','Continua con nuevas TTPs','Estática desde 2011']],
+     traps:[{q:'¿MITRE ATT&CK reemplaza al Cyber Kill Chain?',a:'No son alternativas excluyentes. El Kill Chain explica el flujo general de un ataque. ATT&CK proporciona el detalle técnico de cada técnica. Se complementan: Kill Chain para el "qué fase" y ATT&CK para el "cómo exactamente".'}],
+     verdict:'Kill Chain da la narrativa del ataque; MITRE ATT&CK da el diccionario técnico detallado.'},
+    {id:'redteam-vs-pentest',a:'redteam',b:'pentest',
+     sims:['Ambos son evaluaciones ofensivas autorizadas','Ambos buscan vulnerabilidades','Ambos generan informes de mejora'],
+     diffs:[['Alcance','Amplio: organización completa, OPSEC total','Acotado: sistema/aplicación específica'],['Duración','Semanas o meses','Días o semanas'],['Conocimiento defensivo','Sin aviso al Blue Team','El equipo de seguridad puede estar informado'],['Objetivo','Simular APT, probar detección y respuesta','Encontrar vulnerabilidades técnicas'],['Entregable','Evaluación de madurez de defensa','Lista de vulnerabilidades técnicas con CVSS']],
+     traps:[{q:'¿Un pentest equivale a un Red Team exercise?',a:'No. Un pentest es técnico y acotado. Un Red Team exercise es estratégico, con OPSEC real, y mide tanto la capacidad de ataque como la de defensa. El Red Team puede incluir ingeniería social, físico y digital.'}],
+     verdict:'Pentest = buscar agujeros en una pared específica. Red Team = probar si el castillo completo puede detectar un asalto real.'},
+    {id:'zerotrust-vs-defense',a:'zerotrust',b:'defensedepth',
+     sims:['Ambos son estrategias de arquitectura de seguridad','Ambos asumen que los ataques ocurrirán','Ambos complementan controles técnicos'],
+     diffs:[['Premisa','Nunca confiar, incluso en la red interna','Múltiples capas reducen el riesgo total'],['Perímetro','Elimina el perímetro tradicional','Refuerza múltiples perímetros'],['Identidad','Central: verificación continua','Uno más de los controles'],['Implementación','Requiere rediseño de arquitectura','Puede añadirse progresivamente']],
+     traps:[{q:'¿Zero Trust es Defense in Depth más moderno?',a:'Son estrategias complementarias con distinto enfoque. Defense in Depth suma capas de control (más es mejor). Zero Trust redefine el modelo de confianza (nunca confíes por defecto). Pueden y deben coexistir.'}],
+     verdict:'Defense in Depth añade capas de murallas; Zero Trust elimina la confianza implícita dentro de ellas.'},
+    {id:'authn-vs-authz2',a:'redteam',b:'blueteam',
+     sims:['Ambos son equipos de seguridad','Ambos trabajan para mejorar la postura de seguridad','Ambos usan el framework MITRE ATT&CK'],
+     diffs:[['Rol','Atacante simulado (ofensivo)','Defensor real (defensivo)'],['Objetivo','Comprometer sistemas','Detectar y responder incidentes'],['Mentalidad','Adversarial: ¿cómo entro?','Defensiva: ¿qué está pasando?'],['Herramientas','Metasploit, Cobalt Strike, C2 frameworks','SIEM, EDR, SOAR, threat hunting']],
+     traps:[{q:'¿El Red Team y Blue Team trabajan juntos?',a:'Depende del tipo de ejercicio. En ejercicios tradicionales, trabajan de forma independiente (el Blue Team no sabe cuándo atacará el Red). En ejercicios Purple Team, colaboran en tiempo real para mejorar mutuamente.'}],
+     verdict:'Red Team rompe; Blue Team defiende. Purple Team hace que ambos mejoren juntos.'},
+  ],
+  scenarios:[
+    {id:'s1',title:'Tráfico anómalo en la red',diff:'fácil',
+     context:'El analista SOC recibe una alerta: un servidor interno está enviando 50GB de datos hacia una IP externa desconocida a las 3:00 AM.',
+     question:'¿Qué conceptos de seguridad están directamente implicados en esta situación?',
+     options:[
+       {text:'IOC (la IP desconocida), exfiltración de datos, monitorización SIEM',correct:true,explanation:'La IP externa desconocida puede ser un IOC (indicador de compromiso). La transmisión masiva de datos es exfiltración. El SIEM detectó el comportamiento anómalo.'},
+       {text:'Vulnerabilidad de buffer overflow en el servidor',correct:false,explanation:'No hay información sobre una vulnerabilidad técnica específica. El problema es el comportamiento, no el vector de entrada.'},
+       {text:'Ataque de fuerza bruta contra contraseñas',correct:false,explanation:'No hay evidencia de intentos de autenticación. El servidor ya está enviando datos, lo que sugiere que ya fue comprometido previamente.'},
+       {text:'Denegación de Servicio (DoS) contra el servidor',correct:false,explanation:'DoS implica hacer un servicio inaccesible. Aquí el servidor está activo pero enviando datos: es exfiltración, no DoS.'},
+     ]},
+    {id:'s2',title:'El empleado y el archivo cifrado',diff:'fácil',
+     context:'Un empleado llega a trabajar y encuentra que todos sus archivos tienen extensión .locked y no puede abrirlos. En el escritorio hay un archivo "LEEME.txt" con instrucciones para pagar en Bitcoin.',
+     question:'¿Cómo clasificarías correctamente lo que ha ocurrido?',
+     options:[
+       {text:'Infección por malware tipo ransomware que usa cifrado para extorsión',correct:true,explanation:'Es un ransomware: malware que cifra archivos y exige rescate. Usa cifrado (no hashing) porque necesita poder descifrar al recibir el pago. El ransomware es el malware; el cifrado es el mecanismo.'},
+       {text:'El sistema operativo ha cifrado los archivos por un error de actualización',correct:false,explanation:'Los sistemas operativos no cifran archivos con instrucciones de rescate. La nota de rescate y la extensión anómala son indicadores claros de ransomware.'},
+       {text:'Un hacker ha hasheado los archivos para ocultarlos',correct:false,explanation:'El hashing es irreversible: no se puede recuperar el archivo original. El ransomware usa cifrado (reversible con clave) para poder cobrar el rescate y devolver acceso.'},
+       {text:'Un exploit ha borrado los archivos y creado copias vacías',correct:false,explanation:'Los archivos no están borrados: están cifrados e inaccesibles. La exigencia de rescate confirma que el atacante tiene la clave de descifrado.'},
+     ]},
+    {id:'s3',title:'La auditoría y el pentest',diff:'medio',
+     context:'Una empresa de banca recibe un requerimiento regulatorio para "evaluar la seguridad de sus sistemas". El CISO debe decidir entre contratar un pentest o una auditoría ISO 27001.',
+     question:'¿Cuál es la diferencia clave que debe considerar el CISO para tomar la decisión correcta?',
+     options:[
+       {text:'La auditoría evalúa cumplimiento de controles y procesos; el pentest busca vulnerabilidades técnicas explotables',correct:true,explanation:'El regulador probablemente quiere evidencia de cumplimiento normativo (auditoría). Pero ambas son complementarias: la auditoría revisa que los controles existan, el pentest verifica que funcionen técnicamente.'},
+       {text:'El pentest es más barato y da los mismos resultados que una auditoría',correct:false,explanation:'Son complementarios, no equivalentes. Un pentest puede no detectar ausencia de políticas o problemas de gobernanza que sí detecta una auditoría.'},
+       {text:'La auditoría solo se hace una vez; el pentest debe repetirse semanalmente',correct:false,explanation:'Ambas tienen frecuencias variables. Las auditorías ISO pueden ser anuales; los pentests también. La frecuencia depende del riesgo y los recursos, no de la herramienta.'},
+       {text:'Solo el pentest puede cumplir requerimientos regulatorios bancarios',correct:false,explanation:'Muchos reguladores bancarios (BIS, EBA) requieren específicamente auditorías de cumplimiento normativo. PCI-DSS requiere ambas: auditoría de controles Y pentests técnicos.'},
+     ]},
+    {id:'s4',title:'Zero Trust vs el perímetro tradicional',diff:'medio',
+     context:'Una empresa con muchos empleados remotos post-COVID decide revisar su arquitectura. Actualmente usan VPN + firewall perimetral. Un consultor propone migrar a Zero Trust.',
+     question:'¿Cuál es el argumento técnico más sólido para adoptar Zero Trust en este contexto?',
+     options:[
+       {text:'Con empleados remotos, el perímetro ya no existe: cualquier dispositivo puede estar comprometido, incluso dentro de la VPN',correct:true,explanation:'Zero Trust asume que la red no es de confianza por defecto. Con trabajo remoto, el perímetro es irrelevante: un empleado comprometido desde casa tiene acceso VPN. ZT verifica continuamente identidad y estado del dispositivo.'},
+       {text:'Zero Trust elimina la necesidad de contraseñas y MFA',correct:false,explanation:'Todo lo contrario. Zero Trust refuerza la verificación de identidad y puede requerir MFA más estricto. La confianza se gana con cada acceso, no se asume.'},
+       {text:'Zero Trust solo funciona en empresas con menos de 100 empleados',correct:false,explanation:'Google BeyondCorp, la implementación más famosa de Zero Trust, escala a decenas de miles de empleados. El tamaño no es el factor limitante; la complejidad de implementación sí lo es.'},
+       {text:'Una VPN con firewall actualizado ofrece las mismas garantías que Zero Trust',correct:false,explanation:'La VPN solo verifica el acceso a la red, no a cada recurso individualmente. Una vez dentro de la VPN, un atacante puede moverse lateralmente. Zero Trust verifica cada acceso a cada recurso.'},
+     ]},
+    {id:'s5',title:'El analista y los indicadores',diff:'difícil',
+     context:'El equipo de threat intelligence recibe un informe de un ISAC con IOCs de un APT reciente. Al mismo tiempo, el EDR detecta un comportamiento: excel.exe ejecutando PowerShell que descarga un archivo. El EDR no tiene firma del malware.',
+     question:'¿Cómo debe priorizar el analista su respuesta y por qué?',
+     options:[
+       {text:'Primero responder al comportamiento del EDR (IOA): es más urgente aunque no haya firma, porque indica actividad activa',correct:true,explanation:'El comportamiento de excel.exe → PowerShell → descarga es un IOA clásico de malware fileless o de segunda fase. No tener firma no importa: el comportamiento es malicioso por definición. Los IOCs del ISAC son útiles para búsqueda retrospectiva (hunting) pero no indican actividad activa.'},
+       {text:'Esperar a confirmar si los IOCs del ISAC coinciden antes de actuar, para evitar falsos positivos',correct:false,explanation:'Esperar cuando hay un IOA activo puede permitir que el ataque avance. Los IOAs requieren respuesta inmediata. Los IOCs pueden usarse en paralelo para enriquecer el contexto, no para bloquear la respuesta.'},
+       {text:'Los IOCs son siempre más fiables que los IOAs porque son artefactos concretos',correct:false,explanation:'Los IOCs son fáciles de evadir (el atacante cambia la IP o el hash). Los IOAs detectan el comportamiento que, independientemente de la herramienta, es indicativo de ataque. Para APTs avanzados, los IOAs son más robustos.'},
+       {text:'Como el EDR no tiene firma del malware, debe ignorarse la alerta hasta confirmar',correct:false,explanation:'Esto sería un error crítico. Los malware fileless precisamente evitan tener firma. La detección por comportamiento (IOA) es la defensa más efectiva contra amenazas sin firma.'},
+     ]},
+    {id:'s6',title:'Red Team con resultado inesperado',diff:'difícil',
+     context:'Tras un ejercicio de Red Team de 3 semanas, el equipo logró acceso completo a sistemas críticos. El Blue Team no detectó nada. El CISO está confundido: "Si el Blue Team no detectó nada, ¿fue un éxito o un fracaso el ejercicio?"',
+     question:'¿Cuál es la respuesta técnicamente correcta desde la perspectiva de seguridad?',
+     options:[
+       {text:'El ejercicio fue valioso: reveló que el Blue Team necesita mejoras urgentes en detección. El Red Team cumplió su objetivo.',correct:true,explanation:'El objetivo de un Red Team exercise no es que el Blue Team "gane". Es descubrir brechas reales. Que el Blue Team no detectara nada durante 3 semanas es un hallazgo crítico que justifica inversión en SIEM, EDR, threat hunting o entrenamiento SOC. El ejercicio fue exitoso porque reveló la verdad.'},
+       {text:'El ejercicio fue un fracaso porque el Blue Team no respondió correctamente',correct:false,explanation:'El Blue Team "fallando" no hace fracasar el ejercicio. Al contrario, revela brechas reales que, de haberse producido con un atacante real, habrían sido devastadoras. El fracaso hubiera sido no hacer el ejercicio.'},
+       {text:'El Red Team hizo trampa: un ejercicio real siempre debe ser detectable',correct:false,explanation:'Un Red Team realista usa OPSEC para no ser detectado, igual que un APT real. Si el ejercicio es fácilmente detectable, no simula correctamente las amenazas avanzadas.'},
+       {text:'Hay que repetir el ejercicio con un alcance más limitado para que el Blue Team pueda detectarlo',correct:false,explanation:'Reducir el alcance para garantizar la detección no evalúa la seguridad real. Lo correcto es mejorar las capacidades del Blue Team y repetir el ejercicio con el mismo nivel de sofisticación.'},
+     ]},
+  ],
+  quizQuestions:[
+    {id:'q1',type:'mc',diff:1,concept:'vuln',q:'¿Cuál de las siguientes opciones describe mejor una vulnerabilidad?',
+     opts:['Un atacante externo que intenta acceder a la red','Un fallo en el software que puede ser explotado','La probabilidad de sufrir un ciberataque','Un programa malicioso instalado sin autorización'],
+     correct:1,exp:'Una vulnerabilidad es una debilidad técnica (fallo, error de configuración) que puede ser explotada. No es el atacante (amenaza) ni la probabilidad (riesgo) ni el malware.'},
+    {id:'q2',type:'tf',diff:1,concept:'hashing',q:'El hashing y el cifrado son intercambiables para proteger contraseñas en bases de datos.',
+     opts:['Verdadero','Falso'],correct:1,exp:'Son conceptos distintos. Las contraseñas deben hashearse (bcrypt, Argon2), no cifrarse. Si se cifran, la base de datos contiene la clave y un atacante podría descifrarlas. El hashing es unidireccional y más seguro para credenciales.'},
+    {id:'q3',type:'mc',diff:1,concept:'authn',q:'Un usuario introduce su contraseña correcta y accede al sistema. ¿Qué proceso acaba de ocurrir?',
+     opts:['Autorización','Autenticación','Cifrado de sesión','Auditoría de acceso'],
+     correct:1,exp:'Introducir credenciales para demostrar la identidad es autenticación (¿quién eres?). La autorización vendría después, al determinar qué puede hacer ese usuario.'},
+    {id:'q4',type:'mc',diff:2,concept:'ids',q:'¿Cuál es la diferencia principal entre un IDS y un IPS?',
+     opts:['El IDS cifra el tráfico; el IPS no','El IDS solo detecta; el IPS detecta y bloquea','El IPS solo funciona en redes WiFi','No hay diferencia, son el mismo sistema'],
+     correct:1,exp:'El IDS (Intrusion Detection System) monitoriza y genera alertas pero no actúa. El IPS (Intrusion Prevention System) actúa en línea y puede bloquear tráfico malicioso automáticamente.'},
+    {id:'q5',type:'mc',diff:2,concept:'ioc',q:'Un analista encuentra el hash SHA-256 de un archivo de malware conocido en un sistema corporativo. ¿Qué tipo de indicador es esto?',
+     opts:['IOA (Indicator of Attack)','IOC (Indicator of Compromise)','CVE (Common Vulnerability and Exposure)','TTPs de MITRE ATT&CK'],
+     correct:1,exp:'Un hash de malware conocido es un IOC clásico: evidencia forense de que el sistema fue comprometido. Un IOA sería un comportamiento anómalo (ej: proceso ejecutando comandos sospechosos). Un CVE es un identificador de vulnerabilidad.'},
+    {id:'q6',type:'mc',diff:2,concept:'malware',q:'¿Qué afirmación describe correctamente la relación entre exploit y malware?',
+     opts:['Todo malware contiene un exploit','Un exploit puede ser parte de un malware, pero no todo malware usa exploits','Los exploits son siempre más peligrosos que el malware','Exploit y malware son sinónimos técnicos'],
+     correct:1,exp:'Un exploit es la técnica que aprovecha una vulnerabilidad. El malware puede usar exploits para propagarse (ej: WannaCry usa EternalBlue), pero también puede distribuirse por phishing sin exploits técnicos. No son sinónimos.'},
+    {id:'q7',type:'mc',diff:3,concept:'ioa',q:'Un equipo de seguridad nota que excel.exe está generando un proceso hijo de cmd.exe que ejecuta PowerShell. No hay firma de malware conocida. ¿Cómo clasificarías este hallazgo?',
+     opts:['IOC: se encontró un artefacto malicioso conocido','IOA: el comportamiento del proceso indica actividad potencialmente maliciosa','Falso positivo: Excel puede ejecutar macros legítimamente','CVE: se ha encontrado una vulnerabilidad en Excel'],
+     correct:1,exp:'Este patrón de comportamiento (Office → cmd → PowerShell) es un IOA clásico. No hay IOC concreto (no hay hash de malware). El comportamiento en sí es el indicador. Aunque macros legítimas existen, este patrón es señal de alerta que requiere investigación.'},
+    {id:'q8',type:'mc',diff:3,concept:'zerotrust',q:'Una empresa implementa verificación de identidad en cada acceso, microsegmentación y acceso a recursos basado en contexto (dispositivo, ubicación, hora). ¿Qué modelo arquitectónico está aplicando?',
+     opts:['Defense in Depth (defensa en profundidad)','Zero Trust Architecture','DMZ (Zona desmilitarizada)','VPN split tunneling'],
+     correct:1,exp:'Zero Trust implica: verificar siempre (identity-centric), nunca confiar implícitamente, microsegmentar recursos y evaluar el contexto de cada acceso. Defense in Depth añade capas de controles pero no elimina la confianza implícita en la red interna.'},
+    {id:'q9',type:'mc',diff:2,concept:'mitre',q:'Un equipo SOC quiere mapear las alertas de su SIEM a comportamientos específicos de atacantes. ¿Qué framework es más adecuado?',
+     opts:['Cyber Kill Chain (Lockheed Martin)','MITRE ATT&CK','ISO 27001','NIST CSF'],
+     correct:1,exp:'MITRE ATT&CK proporciona un catálogo de técnicas y tácticas específicas (TTPs) que pueden mapearse directamente a alertas de SIEM. El Kill Chain da fases genéricas, no técnicas específicas. ISO 27001 y NIST CSF son frameworks de gobernanza, no de TTPs.'},
+    {id:'q10',type:'mc',diff:3,concept:'pentest',q:'¿Cuál es el objetivo principal de un ejercicio de Red Team que lo diferencia de un pentest?',
+     opts:['Encontrar el mayor número posible de CVEs explotables','Evaluar la capacidad del Blue Team para detectar y responder a un ataque real simulado','Verificar que los parches de seguridad están aplicados correctamente','Obtener acceso a todos los sistemas sin ser detectado como fin en sí mismo'],
+     correct:1,exp:'El objetivo del Red Team es probar la capacidad de detección y respuesta del Blue Team simulando un atacante real (APT). El pentest busca vulnerabilidades técnicas. En el Red Team, acceder a sistemas sin ser detectado es el medio de simulación, no el fin último.'},
+  ],
+  battles:[
+    {id:'b1',a:'Hashing',b:'Cifrado',color_a:'var(--accent2)',color_b:'var(--accent3)',
+     statements:[
+       {text:'Se usa para almacenar contraseñas de forma segura',answer:'a',exp:'Correcto. Las contraseñas se hashean (bcrypt, Argon2) porque no necesitan recuperarse. Si se cifraran, la clave estaría en el servidor y sería un riesgo.'},
+       {text:'Protege la confidencialidad de mensajes en tránsito',answer:'b',exp:'Correcto. TLS usa cifrado (AES) para proteger el contenido de las comunicaciones. El hashing no puede usarse para esto porque es irreversible.'},
+       {text:'Puede verificarse la integridad de un archivo descargado',answer:'a',exp:'Correcto. Los hashes (SHA-256) verifican integridad: si el archivo cambia, el hash cambia. No se necesita clave y es suficiente para detectar modificaciones.'},
+       {text:'Permite descifrar el contenido con la clave correcta',answer:'b',exp:'Correcto. Solo el cifrado es reversible. Un hash nunca puede revertirse al dato original (por definición de función unidireccional).'},
+       {text:'Produce siempre una salida de longitud fija',answer:'a',exp:'Correcto. Las funciones hash producen siempre un output de longitud fija (ej: SHA-256 = 256 bits) independientemente del tamaño del input.'},
+     ]},
+    {id:'b2',a:'Autenticación',b:'Autorización',color_a:'var(--accent)',color_b:'var(--accent4)',
+     statements:[
+       {text:'Verifica que el usuario es quien dice ser',answer:'a',exp:'Correcto. Autenticación = verificar identidad. Mecanismos: contraseña, MFA, certificado, biometría.'},
+       {text:'Determina qué recursos puede acceder el usuario',answer:'b',exp:'Correcto. Autorización = permisos y privilegios. Mecanismos: RBAC, ACLs, políticas.'},
+       {text:'El MFA (Multi-Factor Authentication) mejora este proceso',answer:'a',exp:'Correcto. MFA añade factores adicionales al proceso de autenticación para verificar la identidad con mayor seguridad.'},
+       {text:'El principio de mínimo privilegio aplica directamente a este concepto',answer:'b',exp:'Correcto. El principio de mínimo privilegio (least privilege) es una directriz de autorización: los usuarios deben tener solo los permisos estrictamente necesarios.'},
+       {text:'Un token JWT puede transportar información sobre este proceso',answer:'b',exp:'Correcto. Los JWT (JSON Web Tokens) suelen incluir claims de autorización (roles, permisos). La autenticación puede usar OAuth/OIDC pero el token resultante contiene información de autorización.'},
+     ]},
+    {id:'b3',a:'IOC',b:'IOA',color_a:'var(--danger)',color_b:'var(--warning)',
+     statements:[
+       {text:'Detecta amenazas incluso cuando no hay firma de malware conocida',answer:'b',exp:'Correcto. Los IOAs detectan comportamiento malicioso independientemente de la herramienta. Un exploit nuevo sin firma se detecta por el comportamiento anómalo del proceso.'},
+       {text:'El hash SHA-256 de un archivo de malware es un ejemplo de este concepto',answer:'a',exp:'Correcto. Los hashes de malware son IOCs clásicos. Forman parte de threat feeds y se usan en herramientas como VirusTotal.'},
+       {text:'excel.exe ejecutando PowerShell inesperadamente es un ejemplo',answer:'b',exp:'Correcto. Este patrón de comportamiento (proceso inusual spawneando shell) es un IOA: indica actividad potencialmente maliciosa independientemente del payload.'},
+       {text:'Un atacante sofisticado puede evadirlo fácilmente cambiando herramientas',answer:'a',exp:'Correcto. Los IOCs (IPs, hashes, dominios) son fáciles de cambiar para un APT. Por eso los IOAs son más resistentes a la evasión.'},
+       {text:'Se usa principalmente para hunting retrospectivo y correlación forense',answer:'a',exp:'Correcto. Los IOCs se usan para buscar en logs históricos si un indicador conocido apareció antes de ser detectado. Los IOAs son más útiles para detección en tiempo real.'},
+     ]},
+    {id:'b4',a:'Red Team',b:'Blue Team',color_a:'var(--danger)',color_b:'var(--accent)',
+     statements:[
+       {text:'Usa herramientas como Metasploit y Cobalt Strike',answer:'a',exp:'Correcto. El Red Team usa herramientas ofensivas para simular atacantes. Metasploit, Cobalt Strike, Impacket y otras herramientas de pentest son su arsenal.'},
+       {text:'Opera el SIEM y responde a alertas de seguridad',answer:'b',exp:'Correcto. El Blue Team gestiona la infraestructura defensiva: SIEM, EDR, firewalls. Los analistas SOC son parte del Blue Team.'},
+       {text:'Realiza threat hunting para encontrar amenazas no detectadas',answer:'b',exp:'Correcto. El threat hunting es actividad proactiva del Blue Team: buscar indicadores de compromiso latentes que las herramientas automáticas no detectaron.'},
+       {text:'Simula las TTPs de un APT para evaluar defensas',answer:'a',exp:'Correcto. El Red Team emula las tácticas y técnicas de adversarios reales (APTs) usando el framework MITRE ATT&CK como referencia.'},
+     ]},
+  ],
+  categories:['Fundamentos','Detección y Defensa','Criptografía','Identidad y Acceso','Evaluación de Seguridad','Arquitectura de Seguridad','Inteligencia de Amenazas','Tipos de Ataque','Frameworks'],
+  achievements:[
+    {id:'first',name:'Primer Paso',icon:'🎯',desc:'Visita tu primer concepto',earned:true},
+    {id:'compare5',name:'Analista',icon:'🔍',desc:'Compara 5 pares de conceptos',earned:false},
+    {id:'quiz10',name:'Quiz Master',icon:'🧠',desc:'Completa 10 quizzes',earned:false},
+    {id:'battle5',name:'Guerrero',icon:'⚔️',desc:'Gana 5 batallas',earned:true},
+    {id:'streak7',name:'Constante',icon:'🔥',desc:'7 días de racha',earned:false},
+    {id:'perfect',name:'Perfección',icon:'💎',desc:'Obtén 100% en un quiz',earned:false},
+  ]
+};
+
+// ── PERSISTENCIA ──────────────────────────────────────────────────────────────
+// Solo se persisten los campos de progreso del usuario (no el estado efímero
+// de quiz/battle en curso, que se reinicia con cada visita al módulo).
+const SAVE_KEY = 'cyberlearn_progress_v1';
+
+function defaultProgress(){
+  return {
+    xp: 0,
+    level: 1,
+    streak: 0,
+    lastDate: '',
+    mastery: {},          // { [conceptId]: number 0-100 }
+    stats: { concepts: 0, quizzes: 0, battles: 0 },
+    activity: [],         // historial real de acciones — vacío al inicio
+  };
+}
+
+function loadProgress(){
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(raw){
+      const saved = JSON.parse(raw);
+      return Object.assign(defaultProgress(), saved);
+    }
+  } catch(e){}
+  return defaultProgress();
+}
+
+function saveProgress(){
+  const toSave = {
+    xp:       state.xp,
+    level:    state.level,
+    streak:   state.streak,
+    lastDate: state.lastDate,
+    mastery:  state.mastery,
+    stats:    state.stats,
+    activity: state.activity,
+  };
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(toSave)); } catch(e){}
+}
+
+// Calcula racha de días consecutivos
+function updateStreak(progress){
+  const today = new Date().toISOString().slice(0,10); // 'YYYY-MM-DD'
+  if(!progress.lastDate){
+    progress.streak  = 1;
+    progress.lastDate = today;
+  } else if(progress.lastDate !== today){
+    const last = new Date(progress.lastDate);
+    const now  = new Date(today);
+    const diff = Math.round((now - last) / 86400000);
+    progress.streak  = diff === 1 ? (progress.streak || 0) + 1 : 1;
+    progress.lastDate = today;
+  }
+  return progress;
+}
+
+// ── ESTADO EN MEMORIA ──────────────────────────────────────────────────────────
+const _saved = updateStreak(loadProgress());
+
+const state = {
+  currentPage: 'home',
+  xp:       _saved.xp,
+  level:    _saved.level,
+  streak:   _saved.streak,
+  lastDate: _saved.lastDate,
+  mastery:  _saved.mastery,
+  stats:    _saved.stats,
+  activity: _saved.activity,           // [] cuando nunca se ha usado
+  quizState:   { questions:[], current:0, score:0, answered:false, complete:false },
+  battleState: { current:null, answered:[], score:{a:0,b:0} },
+};
+
+// Guarda el estado inicial (streak/date actualizados) sin esperar a la primera acción
+saveProgress();
+
+// ── REINICIO COMPLETO ──────────────────────────────────────────────────────────
+function confirmReset(){
+  if(!confirm('¿Reiniciar todo el progreso?\nSe borrarán XP, nivel, racha, dominio de conceptos y actividad.\n\nEsta acción no se puede deshacer.')) return;
+  localStorage.removeItem(SAVE_KEY);
+  const fresh = defaultProgress();
+  state.xp       = fresh.xp;
+  state.level    = fresh.level;
+  state.streak   = fresh.streak;
+  state.lastDate = fresh.lastDate;
+  state.mastery  = fresh.mastery;
+  state.stats    = fresh.stats;
+  state.activity = fresh.activity;
+  // Actualiza la barra superior
+  const fill  = document.getElementById('xp-fill');
+  const label = document.getElementById('xp-label');
+  const badge = document.getElementById('level-badge');
+  const strk  = document.getElementById('streak-num');
+  if(fill)  fill.style.width = '0%';
+  if(label) label.textContent = '0 / 500 XP';
+  if(badge) badge.textContent = 'LVL 1';
+  if(strk)  strk.textContent  = '0 dias';
+  updateStatsDOM();
+  navigate('home');
+  const t = document.getElementById('toast');
+  t.textContent = '✓ Progreso reiniciado';
+  t.style.display = 'block';
+  setTimeout(()=>{ t.style.display='none'; }, 2500);
+}
+
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const navEl = document.querySelector(`[data-page="${page}"]`);
+  if(navEl) navEl.classList.add('active');
+  state.currentPage=page;
+  if(page==='academy')renderAcademy();
+  if(page==='compare')renderCompare();
+  if(page==='scenarios')renderScenarios('all');
+  if(page==='quiz')initQuiz();
+  if(page==='battle')renderBattle();
+  if(page==='progress')renderProgress();
+  if(page==='home')renderHome();
+}
+
+function renderHome(){
+  const strk=document.getElementById('streak-num');
+  if(strk)strk.textContent=state.streak;
+  document.getElementById('s-concepts').textContent=state.stats.concepts;
+  document.getElementById('s-quizzes').textContent=state.stats.quizzes;
+  document.getElementById('s-battles').textContent=state.stats.battles;
+  document.getElementById('s-xp').textContent=state.xp;
+  const al=document.getElementById('home-activity');
+  al.innerHTML=state.activity.map(a=>`
+    <div class="activity-item">
+      <div class="activity-icon ${a.type}"><i class="ti ti-${a.type==='quiz'?'brain':a.type==='battle'?'sword':'terminal'}"></i></div>
+      <div class="activity-info"><div class="activity-title">${a.title}</div><div class="activity-time">${a.time}</div></div>
+      <div class="activity-xp">${a.xp}</div>
+    </div>`).join('');
+}
+
+function renderAcademy(){
+  const cats=KB.categories;
+  const cf=document.getElementById('cat-filter');
+  cf.innerHTML=`<button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>`+
+    cats.map(c=>`<button class="filter-btn" onclick="setFilter('${c}',this)">${c}</button>`).join('');
+  filterConcepts();
+}
+
+let activeFilter='all';
+function setFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  filterConcepts();
+}
+
+function filterConcepts(){
+  const q=(document.getElementById('academy-search')||{}).value?.toLowerCase()||'';
+  const list=document.getElementById('concepts-list');
+  const filtered=KB.concepts.filter(c=>{
+    const matchCat=activeFilter==='all'||c.cat===activeFilter;
+    const matchQ=!q||c.name.toLowerCase().includes(q)||c.def.toLowerCase().includes(q);
+    return matchCat&&matchQ;
+  });
+  if(!filtered.length){list.innerHTML='<div class="empty-state"><i class="ti ti-search"></i>No se encontraron conceptos</div>';return;}
+  list.innerHTML=filtered.map(c=>{
+    const m=state.mastery[c.id]||0;
+    const mc=m>70?'var(--success)':m>40?'var(--warning)':'var(--danger)';
+    return `<div class="concept-card" id="card-${c.id}">
+      <div class="concept-header">
+        <div><div class="concept-name">${c.name}</div><div class="concept-category">${c.cat}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <span class="tag tag-purple">${c.tags[0]}</span>
+          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono)">Dom: <span style="color:${mc}">${m}%</span></div>
+        </div>
+      </div>
+      <div class="concept-def">${c.def}</div>
+      <div class="concept-analogy">${c.analogy}</div>
+      <button class="expand-btn" onclick="toggleConcept('${c.id}')"><i class="ti ti-chevron-down"></i> Ver ejemplos y caso real</button>
+      <div class="concept-extra" id="extra-${c.id}">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Ejemplos</div>
+        <ul class="example-list">${c.examples.map(e=>`<li>${e}</li>`).join('')}</ul>
+        <div style="margin-top:12px;padding:10px 12px;background:rgba(0,229,255,.06);border-radius:8px;border:1px solid rgba(0,229,255,.15);font-size:13px;color:var(--text2)">
+          <span style="color:var(--accent);font-weight:700">Caso real:</span> ${c.realcase}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleConcept(id){
+  const el=document.getElementById('extra-'+id);
+  const opening=!el.classList.contains('open');
+  el.classList.toggle('open');
+  if(opening){
+    state.stats.concepts++;
+    addXP(5,'academia');
+    updateStatsDOM();
+    saveProgress();
+  }
+}
+
+function renderCompare(){
+  const sel=document.getElementById('compare-select');
+  sel.innerHTML=KB.comparisons.map(c=>`<option value="${c.id}">${KB.concepts.find(x=>x.id===c.a)?.name} vs ${KB.concepts.find(x=>x.id===c.b)?.name}</option>`).join('');
+  loadComparison();
+}
+
+function loadComparison(){
+  const id=document.getElementById('compare-select').value;
+  const comp=KB.comparisons.find(c=>c.id===id);
+  if(!comp)return;
+  const ca=KB.concepts.find(c=>c.id===comp.a);
+  const cb=KB.concepts.find(c=>c.id===comp.b);
+  const el=document.getElementById('compare-content');
+  el.innerHTML=`
+    <div class="compare-wrap">
+      <div class="compare-side left">
+        <div class="compare-title" style="color:var(--accent2)">${ca.name}</div>
+        <div class="compare-prop"><div class="prop-label">Definición</div><div class="prop-val">${ca.def}</div></div>
+        <div class="compare-prop"><div class="prop-label">Analogía</div><div class="prop-val" style="font-style:italic">${ca.analogy}</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0">
+        <div class="vs-badge">VS</div>
+      </div>
+      <div class="compare-side right">
+        <div class="compare-title" style="color:var(--accent3)">${cb.name}</div>
+        <div class="compare-prop"><div class="prop-label">Definición</div><div class="prop-val">${cb.def}</div></div>
+        <div class="compare-prop"><div class="prop-label">Analogía</div><div class="prop-val" style="font-style:italic">${cb.analogy}</div></div>
+      </div>
+    </div>
+    <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Similitudes</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">${comp.sims.map(s=>`<div style="padding:6px 12px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.15);border-radius:20px;font-size:12px;color:var(--text2)">${s}</div>`).join('')}</div>
+    <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Diferencias clave</div>
+    <table class="diff-table" style="margin-bottom:16px">
+      <thead><tr><th>Criterio</th><th style="color:var(--accent2)">${ca.name}</th><th style="color:var(--accent3)">${cb.name}</th></tr></thead>
+      <tbody>${comp.diffs.map(d=>`<tr><td style="font-weight:600;color:var(--text)">${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td></tr>`).join('')}</tbody>
+    </table>
+    <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:var(--danger);text-transform:uppercase;letter-spacing:.5px">⚠ Trampas comunes</div>
+    ${comp.traps.map(t=>`<div class="trap-card"><div class="trap-q">❓ ${t.q}</div><div class="trap-a">✓ ${t.a}</div></div>`).join('')}
+    <div style="margin-top:16px;padding:14px;background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);border-radius:10px;font-size:14px;font-weight:600;color:var(--accent)">
+      💡 ${comp.verdict}
+    </div>
+  `;
+  addXP(10,'compare');
+}
+
+function renderScenarios(filter){
+  const list=document.getElementById('scenarios-list');
+  const filtered=filter==='all'?KB.scenarios:KB.scenarios.filter(s=>s.diff===filter);
+  list.innerHTML=filtered.map(s=>`
+    <div class="scenario-card" id="sc-${s.id}">
+      <div class="scenario-header">
+        <div class="scenario-icon"><i class="ti ti-terminal-2"></i></div>
+        <div style="flex:1"><div class="scenario-title">${s.title}</div></div>
+        <span class="scenario-diff diff-${s.diff==='fácil'?'easy':s.diff==='medio'?'medium':'hard'}">${s.diff.toUpperCase()}</span>
+      </div>
+      <div class="scenario-text">${s.context}</div>
+      <div class="scenario-question">${s.question}</div>
+      <div class="options-list" id="opts-${s.id}">
+        ${s.options.map((o,i)=>`<button class="option-btn" onclick="answerScenario('${s.id}',${i})">
+          <span class="option-letter">${String.fromCharCode(65+i)}</span>${o.text}
+        </button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function filterScenarios(f,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderScenarios(f==='all'?'all':f);
+}
+
+function answerScenario(sid,idx){
+  const s=KB.scenarios.find(x=>x.id===sid);
+  const opts=document.getElementById('opts-'+sid);
+  const btns=opts.querySelectorAll('.option-btn');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(s.options[i].correct)b.classList.add('correct');
+    else if(i===idx&&!s.options[i].correct)b.classList.add('wrong');
+  });
+  const feedbackEl=document.createElement('div');
+  feedbackEl.className='quiz-feedback show '+(s.options[idx].correct?'right':'wrong');
+  feedbackEl.innerHTML=`<strong>${s.options[idx].correct?'✓ Correcto':'✗ Incorrecto'}</strong> — ${s.options[idx].explanation}`;
+  opts.after(feedbackEl);
+  if(s.options[idx].correct)addXP(40,'scenario');
+}
+
+function initQuiz(){
+  const qs=[...KB.quizQuestions].sort(()=>Math.random()-.5).slice(0,6);
+  state.quizState={questions:qs,current:0,score:0,answered:false,complete:false};
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const qs=state.quizState;
+  const container=document.getElementById('quiz-container');
+  if(qs.complete){
+    const pct=Math.round((qs.score/qs.questions.length)*100);
+    container.innerHTML=`<div class="quiz-score">
+      <div class="score-num">${pct}%</div>
+      <div class="score-label">${qs.score} de ${qs.questions.length} correctas</div>
+      <div style="margin:16px 0;color:var(--text2);font-size:14px">${pct>=80?'¡Excelente! Dominas estos conceptos.':pct>=60?'Buen progreso. Repasa los conceptos fallados.':'Necesitas repasar. Visita la Academia.'}</div>
+      <button class="btn btn-primary" onclick="initQuiz()"><i class="ti ti-refresh"></i> Nuevo Quiz</button>
+    </div>`;
+    addXP(50,'quiz');
+    state.stats.quizzes++;
+    updateStatsDOM();
+    saveProgress();
+    return;
+  }
+  const q=qs.questions[qs.current];
+  container.innerHTML=`
+    <div class="quiz-progress">${qs.questions.map((_,i)=>`<div class="quiz-dot ${i<qs.current?'done':i===qs.current?'current':''}"></div>`).join('')}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="quiz-type">${q.type==='mc'?'opción múltiple':'verdadero / falso'} · dificultad ${q.diff}/3</div>
+      <div style="font-size:12px;color:var(--text3);font-family:var(--font-mono)">${qs.current+1}/${qs.questions.length}</div>
+    </div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="options-list" id="quiz-opts">
+      ${q.opts.map((o,i)=>`<button class="option-btn" onclick="answerQuiz(${i})">
+        <span class="option-letter">${String.fromCharCode(65+i)}</span>${o}
+      </button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div id="quiz-next" style="margin-top:16px;display:none">
+      <button class="btn btn-primary" onclick="nextQuestion()">Siguiente <i class="ti ti-arrow-right"></i></button>
+    </div>`;
+}
+
+function answerQuiz(idx){
+  if(state.quizState.answered)return;
+  state.quizState.answered=true;
+  const q=state.quizState.questions[state.quizState.current];
+  const correct=idx===q.correct;
+  if(correct)state.quizState.score++;
+  const btns=document.querySelectorAll('#quiz-opts .option-btn');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.correct)b.classList.add('correct');
+    else if(i===idx&&!correct)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('quiz-feedback');
+  fb.className='quiz-feedback show '+(correct?'right':'wrong');
+  fb.innerHTML=`<strong>${correct?'✓ Correcto!':'✗ Incorrecto'}</strong> — ${q.exp}`;
+  document.getElementById('quiz-next').style.display='block';
+}
+
+function nextQuestion(){
+  state.quizState.answered=false;
+  state.quizState.current++;
+  if(state.quizState.current>=state.quizState.questions.length)state.quizState.complete=true;
+  renderQuiz();
+}
+
+function renderBattle(){
+  const sel=document.getElementById('battle-select');
+  sel.innerHTML=KB.battles.map(b=>`<option value="${b.id}">${b.a} vs ${b.b}</option>`).join('');
+  loadBattle();
+}
+
+function loadBattle(){
+  const id=document.getElementById('battle-select').value;
+  const battle=KB.battles.find(b=>b.id===id);
+  if(!battle)return;
+  state.battleState={current:battle,answered:Array(battle.statements.length).fill(null),score:{a:0,b:0}};
+  renderBattleContent();
+}
+
+function renderBattleContent(){
+  const {current:b,answered,score}=state.battleState;
+  const el=document.getElementById('battle-content');
+  el.innerHTML=`
+    <div class="battle-arena">
+      <div class="battle-side a">
+        <div class="battle-side-name">${b.a}</div>
+        ${KB.concepts.find(c=>c.name===b.a)?`<div style="font-size:12px;color:var(--text2);line-height:1.5">${KB.concepts.find(c=>c.name===b.a)?.def}</div>`:''}
+      </div>
+      <div class="battle-vs">VS<div class="battle-score">${score.a} — ${score.b}</div></div>
+      <div class="battle-side b">
+        <div class="battle-side-name">${b.b}</div>
+        ${KB.concepts.find(c=>c.name===b.b)?`<div style="font-size:12px;color:var(--text2);line-height:1.5">${KB.concepts.find(c=>c.name===b.b)?.def}</div>`:''}
+      </div>
+    </div>
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text2)">¿A qué concepto corresponde cada afirmación?</div>
+    ${b.statements.map((s,i)=>{
+      const ans=answered[i];
+      return `<div class="battle-stmt">
+        <div class="battle-stmt-text">${s.text}</div>
+        <div class="battle-choices">
+          <div class="battle-choice ${ans?ans===s.answer&&ans==='a'?'win':ans==='a'?'lose':'':('' )}" onclick="answerBattle(${i},'a')">${b.a}</div>
+          <div class="battle-choice ${ans?ans===s.answer&&ans==='b'?'win':ans==='b'?'lose':'':('' )}" onclick="answerBattle(${i},'b')">${b.b}</div>
+        </div>
+        ${ans?`<div style="margin-top:8px;font-size:12px;color:${ans===s.answer?'var(--success)':'var(--danger)'};padding:8px;background:${ans===s.answer?'rgba(0,230,118,.08)':'rgba(255,68,102,.08)'};border-radius:6px">${s.exp}</div>`:''}
+      </div>`;
+    }).join('')}
+  `;
+}
+
+function answerBattle(idx,choice){
+  if(state.battleState.answered[idx]!==null)return;
+  state.battleState.answered[idx]=choice;
+  const s=state.battleState.current.statements[idx];
+  if(choice===s.answer){
+    state.battleState.score[choice]++;
+    state.stats.battles++;
+    addXP(15,'battle');
+    updateStatsDOM();
+    saveProgress();
+  }
+  renderBattleContent();
+}
+
+function renderProgress(){
+  const ml=document.getElementById('mastery-list');
+  const sorted=Object.entries(state.mastery).sort((a,b)=>b[1]-a[1]);
+  ml.innerHTML=sorted.map(([id,val])=>{
+    const c=KB.concepts.find(x=>x.id===id);
+    const col=val>70?'var(--success)':val>40?'var(--warning)':'var(--danger)';
+    return `<div class="mastery-item">
+      <div class="mastery-name">${c?.name||id}</div>
+      <div class="mastery-bar"><div class="mastery-fill" style="width:${val}%;background:${col}"></div></div>
+      <div class="mastery-score">${val}%</div>
+    </div>`;
+  }).join('');
+  const pa=document.getElementById('progress-activity');
+  pa.innerHTML=state.activity.map(a=>`
+    <div class="activity-item">
+      <div class="activity-icon ${a.type}"><i class="ti ti-${a.type==='quiz'?'brain':a.type==='battle'?'sword':'terminal'}"></i></div>
+      <div class="activity-info"><div class="activity-title">${a.title}</div><div class="activity-time">${a.time}</div></div>
+      <div class="activity-xp">${a.xp}</div>
+    </div>`).join('');
+  renderRadar();
+  const ag=document.getElementById('achievements-grid');
+  ag.innerHTML=KB.achievements.map(a=>`
+    <div class="achievement ${a.earned?'earned':''}">
+      <div class="achievement-icon">${a.icon}</div>
+      <div class="achievement-name">${a.name}</div>
+      ${a.earned?'<div style="font-size:10px;color:var(--warning);margin-top:2px">✓ obtenido</div>':''}
+    </div>`).join('');
+}
+
+function renderRadar(){
+  const cats=KB.categories.slice(0,7);
+  const svg=document.getElementById('radar-svg');
+  const cx=100,cy=100,r=75,n=cats.length;
+  const scores=cats.map(cat=>{
+    const cs=KB.concepts.filter(c=>c.cat===cat);
+    if(!cs.length)return 0;
+    const avg=cs.reduce((s,c)=>(s+(state.mastery[c.id]||0)),0)/cs.length;
+    return avg/100;
+  });
+  const pts=cats.map((_,i)=>{const a=(i/n)*Math.PI*2-Math.PI/2;return{x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,lx:cx+Math.cos(a)*(r+18),ly:cy+Math.sin(a)*(r+18)}});
+  const grid=[.25,.5,.75,1].map(f=>pts.map(p=>{const dx=p.x-cx,dy=p.y-cy;return`${cx+dx*f},${cy+dy*f}`}).join(' ')).map(d=>`<polygon points="${d}" fill="none" stroke="var(--border)" stroke-width="0.5"/>`).join('');
+  const axes=pts.map(p=>`<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="var(--border)" stroke-width="0.5"/>`).join('');
+  const datapts=cats.map((_,i)=>{const p=pts[i];const dx=p.x-cx,dy=p.y-cy;const f=scores[i];return`${cx+dx*f},${cy+dy*f}`}).join(' ');
+  const labels=pts.map((p,i)=>`<text x="${p.lx}" y="${p.ly}" font-size="7" fill="var(--text2)" text-anchor="middle" dominant-baseline="middle">${cats[i].split(' ')[0]}</text>`).join('');
+  svg.innerHTML=grid+axes+`<polygon points="${datapts}" fill="rgba(0,229,255,.15)" stroke="var(--accent)" stroke-width="1.5"/>`+labels;
+}
+
+function updateStatsDOM(){
+  const sc=document.getElementById('s-concepts');
+  const sq=document.getElementById('s-quizzes');
+  const sb=document.getElementById('s-battles');
+  const sx=document.getElementById('s-xp');
+  if(sc)sc.textContent=state.stats.concepts;
+  if(sq)sq.textContent=state.stats.quizzes;
+  if(sb)sb.textContent=state.stats.battles;
+  if(sx)sx.textContent=state.xp;
+}
+
+function addXP(amount,source){
+  state.xp+=amount;
+  const maxXP=500;
+  const pct=Math.min((state.xp%maxXP)/maxXP*100,100);
+  const fill=document.getElementById('xp-fill');
+  const label=document.getElementById('xp-label');
+  if(fill)fill.style.width=pct+'%';
+  if(label)label.textContent=`${state.xp%maxXP}/${maxXP} XP`;
+  const t=document.getElementById('toast');
+  t.textContent=`+${amount} XP · ${source}`;
+  t.style.display='block';
+  setTimeout(()=>t.style.display='none',2000);
+  if(source==='scenario')state.activity.unshift({type:'scenario',title:'Escenario completado',time:'ahora',xp:`+${amount} XP`});
+  if(source==='quiz')state.activity.unshift({type:'quiz',title:'Quiz respondido',time:'ahora',xp:`+${amount} XP`});
+  if(source==='battle')state.activity.unshift({type:'battle',title:'Respuesta en batalla',time:'ahora',xp:`+${amount} XP`});
+  state.activity=state.activity.slice(0,8);
+}
+
+renderHome();
+</script>
+</body>
+</html>
